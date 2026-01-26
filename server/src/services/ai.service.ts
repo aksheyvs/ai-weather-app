@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const GEMINI_API_URL = process.env.GEMINI_API_UL;
+const GEMINI_API_URL = process.env.GEMINI_API_URL;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 interface AIInput {
@@ -13,7 +13,7 @@ interface AIInput {
 
 export async function generateAIInsight(input: AIInput) {
     const prompt =
-    `
+        `
     Weather data:
     City: ${input.city}
     Temperature: ${input.temperature}°C
@@ -28,7 +28,7 @@ export async function generateAIInsight(input: AIInput) {
         {
             contents: [
                 {
-                    parts: [{text: prompt}],
+                    parts: [{ text: prompt }],
                 },
             ],
         },

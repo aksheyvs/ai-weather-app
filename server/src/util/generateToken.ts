@@ -9,9 +9,9 @@ interface TokenPaylord {
 export function generateToken(payload: TokenPaylord) {
     const secret = process.env.JWT_SECRET;
 
-    if(!secret) {
+    if (!secret) {
         throw new Error("JWT_SECRET is not definet");
     }
 
-    return jwt.sign(payload, secret, {expiresIn: "1h"});
+    return jwt.sign(payload, secret, { expiresIn: "5h" });
 }
