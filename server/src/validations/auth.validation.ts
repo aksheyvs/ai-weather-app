@@ -7,7 +7,7 @@ const registerSchema = Joi.object({
     password: Joi.string().min(6).required(),
 });
 
-const loginSchma = Joi.object({
+const loginSchema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
 });
@@ -24,7 +24,7 @@ export function validateRegister(req: Request, res: Response, next: NextFunction
 }
 
 export function validateLogin(req: Request, res: Response, next: NextFunction) {
-    const { error } = loginSchma.validate(req.body, { abortEarly: false });
+    const { error } = loginSchema.validate(req.body, { abortEarly: false });
 
     if (error) {
         const message = error.details.map((d) => d.message).join(", ");

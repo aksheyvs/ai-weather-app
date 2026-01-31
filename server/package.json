@@ -33,9 +33,12 @@
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.0.0",
     "mongoose": "^9.1.4",
+    "node-cron": "^4.2.1",
     "pg": "^8.17.1",
     "prisma": "^5.22.0",
     "redis": "^5.10.0",
+    "resend": "^6.9.1",
+    "stripe": "^20.3.0",
     "ts-node": "^10.9.2"
   }
 }

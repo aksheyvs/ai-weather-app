@@ -1,4 +1,5 @@
 import app from "./index.js"
+import "./jobs/emailAlerts.cron.js"
 
 const port: number = + (process.env.PORT ?? 3000)
 

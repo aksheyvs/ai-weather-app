@@ -1,19 +1,40 @@
 import mongoose from "mongoose";
-import { ObjectId } from "mongodb";
 
-const {Schema, model} = mongoose;
+
+const { Schema, model } = mongoose;
 
 const alertSchema = new Schema(
-    {
-  "_id": ObjectId,
-  "tenantId": String,
-  "type": String,
-  "severity": String,
-  "message": String,
-  "channels": [String],
-  "isSent": Boolean,
-  "createdAt": Date
-});
+  {
+    tenantId: {
+      type: String,
+      required: true,
+      index: true,
+    },
+
+    email: {
+      type: String,
+      required: true,
+    },
+
+    message: {
+      type: String,
+      required: true,
+    },
+
+    scheduledFor: {
+      type: Date,
+      required: true,
+      index: true,
+    },
+
+    sent: {
+      type: Boolean,
+      default: false,
+    },
+
+  },
+  { timestamps: true }
+);
 
 const Alert = model("Alert", alertSchema);
 export default Alert;
