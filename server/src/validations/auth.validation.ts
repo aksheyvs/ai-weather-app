@@ -13,22 +13,22 @@ const loginSchma = Joi.object({
 });
 
 export function validateRegister(req: Request, res: Response, next: NextFunction) {
-    const {error} = registerSchema.validate(req.body, {abortEarly: false});
+    const { error } = registerSchema.validate(req.body, { abortEarly: false });
 
-    if(error) {
+    if (error) {
         const message = error.details.map((d) => d.message).join(", ");
-        return res.status(400).json({message});
+        return res.status(400).json({ message });
     };
 
     next();
 }
 
 export function validateLogin(req: Request, res: Response, next: NextFunction) {
-    const {error} = loginSchma.validate(req.body, {abortEarly: false});
+    const { error } = loginSchma.validate(req.body, { abortEarly: false });
 
-    if(error) {
+    if (error) {
         const message = error.details.map((d) => d.message).join(", ");
-        return res.status(400).json({message});
+        return res.status(400).json({ message });
     }
 
     next();

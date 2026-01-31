@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const {Schema, model} = mongoose;
+const { Schema, model } = mongoose;
 
 const aiInsightSchema = new Schema(
   {
@@ -37,7 +37,7 @@ const aiInsightSchema = new Schema(
       default: Date.now,
     },
   },
-  {timestamps: true}
+  { timestamps: true }
 );
 
 const AiInsight = model("AiInsight", aiInsightSchema);

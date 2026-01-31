@@ -1,6 +1,6 @@
 import axios from "axios";
 import Weather from "../model/mongo/weatherData.schema.js"
-import {redis} from "../config/redis.js"
+import { redis } from "../config/redis.js"
 
 const API_KEY = process.env.OPENWEATHER_API_KEY;
 
@@ -9,7 +9,7 @@ export async function getWeatherByCity(tenantId: string, city: string) {
 
     const cached = await redis.get(cacheKey);
 
-    if(cached) return JSON.parse(cached);
+    if (cached) return JSON.parse(cached);
 
     const response = await axios.get(
         "https://api.openweathermap.org/data/2.5/weather",
@@ -24,7 +24,7 @@ export async function getWeatherByCity(tenantId: string, city: string) {
 
     const weatherData = {
         tenantId,
-        location:{
+        location: {
             lat: response.data.coord.lat,
             lon: response.data.coord.lon,
             city: response.data.name,
