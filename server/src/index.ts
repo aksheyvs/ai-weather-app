@@ -7,11 +7,15 @@ import cors from "cors"
 import testRouter from "./route/test.routes.js"
 import weatherRoutes from "./route/weather.routes.js"
 import aiRoutes from "./route/ai.routes.js"
+import stripeWebhook from "./route/stripe.webhook.js"
+import billingRoutes from "./route/billing.routes.js"
 
 runMongo();
 runPostgres();
 
 const app = express();
+
+app.use("/stripe", stripeWebhook);
 
 app.use(express.json());
 
@@ -24,6 +28,8 @@ app.use("/auth", authRoutes);
 app.use("/weather", weatherRoutes);
 
 app.use("/ai", aiRoutes);
+
+app.use("/billing", billingRoutes);
 
 app.use(errorHandler);
 
