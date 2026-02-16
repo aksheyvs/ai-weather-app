@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../api/axios";
+import Navbar from "../components/Navbar";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,34 +18,37 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="p-10 space-y-6">
-            <div className="flex gap-2">
-                <Input placeholder="Enter city" value={city} onChange={(e) => setCity(e.target.value)} />
+        <>
+            <Navbar />
+            <div className="p-10 space-y-6">
+                <div className="flex gap-2">
+                    <Input placeholder="Enter city" value={city} onChange={(e) => setCity(e.target.value)} />
 
-                <Button onClick={fetchWeather}>Search</Button>
+                    <Button onClick={fetchWeather}>Search</Button>
+                </div>
+
+                {weather && (
+                    <Card className="w-100">
+                        <CardHeader>
+                            <CardTitle>{weather.location.city}</CardTitle>
+                        </CardHeader>
+
+                        <CardContent className="text-center space-y-3">
+                            {weather.icon && (
+                                <img
+                                    className="mx-auto"
+                                    src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
+                                    alt="weather"
+                                />
+                            )}
+
+                            <p className="text-3xl font-bold">Temperature: {weather.temperature}°C</p>
+                            <p>Humidity: {weather.humidity}%</p>
+                            <p>Condition: {weather.condition}</p>
+                        </CardContent>
+                    </Card>
+                )}
             </div>
-
-            {weather && (
-                <Card className="w-100">
-                    <CardHeader>
-                        <CardTitle>{weather.location.city}</CardTitle>
-                    </CardHeader>
-
-                    <CardContent className="text-center space-y-3">
-                        {weather.icon && (
-                            <img
-                                className="mx-auto"
-                                src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
-                                alt="weather"
-                            />
-                        )}
-
-                        <p className="text-3xl font-bold">Temperature: {weather.temperature}°C</p>
-                        <p>Humidity: {weather.humidity}%</p>
-                        <p>Condition: {weather.condition}</p>
-                    </CardContent>
-                </Card>
-            )}
-        </div>
+        </>
     );
 }
