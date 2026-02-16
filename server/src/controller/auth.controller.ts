@@ -7,7 +7,28 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
 
     try {
         const { name, email, password } = req.body;
+
+        const existingUser = await prisma.user.findUnique({
+            where: { email },
+        });
+
+        if (existingUser) {
+            return res.status(400).json({
+                message: "Email already registered",
+            });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
+
+        const freePlan = await prisma.plan.findFirst({
+            where: { name: "Free" },
+        });
+
+        if (!freePlan) {
+            return res.status(500).json({
+                message: "Free plan not configured"
+            })
+        }
 
         await prisma.$transaction(async (tx) => {
             const tenant = await tx.tenant.create({
@@ -26,15 +47,16 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
                 },
             });
 
-            // await tx.billing.create({
-            //     data: {
-            //         tenantId: tenant.id,
-            //         planId: "FREE_PLAN_ID",
-            //     },
-            // });
+            await tx.billing.create({
+                data: {
+                    tenantId: tenant.id,
+                    planId: freePlan.id,
+                    status: "active",
+                },
+            });
         });
 
-        res.status(201).json({ message: "User registered successfully" });
+        return res.status(201).json({ message: "User registered successfully" });
 
     } catch (err) {
         next(err);

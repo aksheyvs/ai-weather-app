@@ -33,6 +33,14 @@ const weatherSchema = new Schema(
       default: false,
     },
 
+    icon: {
+      type: String
+    },
+
+    condition: {
+      type: String
+    },
+
     source: {
       type: String,
       default: "openweather"

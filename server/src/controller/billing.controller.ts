@@ -1,16 +1,20 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
+import type { AuthRequest } from "../middleware/authMiddleware.js";
 import { stripe } from "../config/stripe.js";
 import { STRIPE_PRICE_MAP } from "../config/stripePrices.js";
 import { prisma } from "../db/postgresClient.js"
 
-export async function createCheckoutSession(req: Request, res: Response) {
+export async function createCheckoutSession(req: AuthRequest, res: Response) {
     try {
-        const { tenantId, planId } = req.body;
+        const tenantId = req.user?.tenantId;
+        const { planId } = req.body;
 
-        if (!tenantId || planId) {
-            return res.status(400).json({
-                message: "tenantId and planId are required",
-            });
+        if (!tenantId) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        if (!planId) {
+            return res.status(400).json({ message: "planId is required" })
         }
 
         const plan = await prisma.plan.findUnique({
@@ -46,7 +50,7 @@ export async function createCheckoutSession(req: Request, res: Response) {
             },
         });
 
-        res.json({ url: session.url });
+        return res.json({ url: session.url });
     } catch (err) {
         console.error("Checkout error:", err);
         res.status(500).json({ message: "Checkout failed" });
