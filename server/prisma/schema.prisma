@@ -61,3 +61,11 @@ model Billing {
   planId    String
   plan      Plan     @relation(fields: [planId], references: [id])
 }
+model Usage {
+  id        String   @id @default(uuid())
+  tenantId  String
+  date      DateTime
+  count     Int      @default(0)
+
+  @@unique([tenantId, date])
+}
