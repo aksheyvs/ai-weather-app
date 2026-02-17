@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/auth.store";
 import { Button } from "@/components/ui/button";
 
@@ -13,7 +13,12 @@ export default function Navbar() {
 
     return (
         <div className="flex justify-between items-center p-4 border-b">
-            <h1 className="font-bold">AI Weather</h1>
+            <div className="flex gap-4">
+                <Link to="/dashboard">Dashboard</Link>
+                <Link to="/billing">Billing</Link>
+                <Link to="/alerts">Alerts</Link>
+                <Link to="/invite">Invite</Link>
+            </div>
 
             <Button variant="destructive" onClick={handleLogout}>
                 Logout

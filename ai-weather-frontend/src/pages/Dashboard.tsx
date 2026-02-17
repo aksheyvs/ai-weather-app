@@ -1,6 +1,5 @@
 import { useState } from "react";
 import api from "../api/axios";
-import Navbar from "../components/Navbar";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +18,6 @@ export default function Dashboard() {
 
     return (
         <>
-            <Navbar />
             <div className="p-10 space-y-6">
                 <div className="flex gap-2">
                     <Input placeholder="Enter city" value={city} onChange={(e) => setCity(e.target.value)} />
