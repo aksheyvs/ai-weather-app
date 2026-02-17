@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { createCheckoutSession } from "../controller/billing.controller.js";
 import { authenticate } from "../middleware/authMiddleware.js";
+import { createCheckoutSession, getBillingStatus } from "../controller/billing.controller.js";
 
 const router = Router();
+
+router.get("/status", authenticate, getBillingStatus);
 
 router.post("/checkout", authenticate, createCheckoutSession);
 

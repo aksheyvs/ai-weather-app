@@ -56,3 +56,37 @@ export async function createCheckoutSession(req: AuthRequest, res: Response) {
         res.status(500).json({ message: "Checkout failed" });
     }
 }
+
+export async function getBillingStatus(req: AuthRequest, res: Response) {
+    try {
+        const tenantId = req.user?.tenantId;
+
+        if (!tenantId) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        const billing = await prisma.billing.findUnique({
+            where: { tenantId },
+            include: { plan: true },
+        });
+
+        if (!billing) {
+            return res.status(404).json({ message: "Billing not found" });
+        }
+
+        const proPlan = await prisma.plan.findFirst({
+            where: { name: "Pro" },
+        });
+
+        return res.json({
+            planName: billing.plan.name,
+            apiLimit: billing.plan.apiLimit,
+            planId: billing.planId,
+            proPlanId: proPlan?.id || null,
+        });
+
+    } catch (err) {
+        console.error("Billing status error:", err);
+        res.status(500).json({ message: "Failed to load billing" });
+    }
+}
