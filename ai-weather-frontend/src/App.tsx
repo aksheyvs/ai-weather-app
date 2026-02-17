@@ -8,6 +8,8 @@ import Dashboard from "./pages/Dashboard";
 import Billing from "./pages/Billing";
 import Alerts from "./pages/Alerts";
 import Invite from "./pages/Invite";
+import BillingSuccess from "./pages/BillingSuccess";
+import BillingCancel from "./pages/BillingCancel";
 
 export default function App() {
     return (
@@ -56,6 +58,8 @@ export default function App() {
                         </ProtectedRoute>
                     }
                 />
+                <Route path="/billing/success" element={<BillingSuccess />} />
+                <Route path="/billing/cancel" element={<BillingCancel />} />
             </Routes>
         </BrowserRouter>
     );
