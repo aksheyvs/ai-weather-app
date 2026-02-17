@@ -42,8 +42,8 @@ export async function createCheckoutSession(req: AuthRequest, res: Response) {
                     quantity: 1,
                 },
             ],
-            success_url: "http://localhost:3000/billing/success",
-            cancel_url: "http://localhost:3000/billing/cancel",
+            success_url: "http://localhost:5173/billing/success",
+            cancel_url: "http://localhost:5173/billing/cancel",
             metadata: {
                 tenantId,
                 planId,
