@@ -1,10 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./Router/ProtectedRoute";
+import Layout from "./layout/Layout";
+
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Billing from "./pages/Billing";
 import Alerts from "./pages/Alerts";
-import ProtectedRoute from "./Router/ProtectedRoute";
+import Invite from "./pages/Invite";
 
 export default function App() {
     return (
@@ -17,7 +20,9 @@ export default function App() {
                     path="/dashboard"
                     element={
                         <ProtectedRoute>
-                            <Dashboard />
+                            <Layout>
+                                <Dashboard />
+                            </Layout>
                         </ProtectedRoute>
                     }
                 />
@@ -25,7 +30,9 @@ export default function App() {
                     path="/billing"
                     element={
                         <ProtectedRoute>
-                            <Billing />
+                            <Layout>
+                                <Billing />
+                            </Layout>
                         </ProtectedRoute>
                     }
                 />
@@ -33,7 +40,19 @@ export default function App() {
                     path="/alerts"
                     element={
                         <ProtectedRoute>
-                            <Alerts />
+                            <Layout>
+                                <Alerts />
+                            </Layout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/invite"
+                    element={
+                        <ProtectedRoute>
+                            <Layout>
+                                <Invite />
+                            </Layout>
                         </ProtectedRoute>
                     }
                 />
