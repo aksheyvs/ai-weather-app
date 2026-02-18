@@ -44,6 +44,19 @@ router.post("/webhook", express.raw({ type: "application/json" }),
             });
         }
 
+        if (event.type === "invoice.payment_failed") {
+            const invoice = event.data.object as any;
+
+            const subscriptionId = invoice.subscription;
+
+            await prisma.billing.updateMany({
+                where: { stripeSubscriptionId: subscriptionId },
+                data: {
+                    status: "past_due",
+                },
+            });
+        }
+
         res.json({ received: true });
     });
 
