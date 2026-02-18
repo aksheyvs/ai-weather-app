@@ -31,18 +31,15 @@ router.post("/webhook", express.raw({ type: "application/json" }),
                 return res.status(400).json({ message: "Missing metadata" });
             }
 
-            await prisma.billing.upsert({
+            await prisma.billing.update({
                 where: { tenantId },
-                update: {
+                data: {
                     planId,
                     status: "active",
+                    stripeCustomerId: session.customer,
+                    stripeSubscriptionId: session.subscription,
                     startDate: new Date(),
                     endDate: null,
-                },
-                create: {
-                    tenantId,
-                    planId,
-                    status: "active",
                 },
             });
         }
