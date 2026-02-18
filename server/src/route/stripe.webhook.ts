@@ -1,7 +1,7 @@
 import express from "express"
 import { stripe } from "../config/stripe.js"
 import { prisma } from "../db/postgresClient.js"
-import { date } from "joi";
+import { STRIPE_PRICE_MAP } from "../config/stripePrices.js";
 
 const router = express.Router();
 
@@ -80,6 +80,31 @@ router.post("/webhook", express.raw({ type: "application/json" }),
                     status: "active",
                     stripeSubscriptionId: null,
                     stripeCustomerId: null,
+                },
+            });
+        }
+
+        if (event.type === "customer.subscription.updated") {
+            const subscription = event.data.object as any;
+
+            const priceId = subscription.items.data[0].price.id;
+
+            const planName =
+                Object.keys(STRIPE_PRICE_MAP).find(
+                    (key) => STRIPE_PRICE_MAP[key as keyof typeof STRIPE_PRICE_MAP] === priceId
+                ) || "Free";
+
+            const plan = await prisma.plan.findFirst({
+                where: { name: planName },
+            });
+
+            if (!plan) return res.json({ received: true });
+
+            await prisma.billing.updateMany({
+                where: { stripeSubscriptionId: subscription.id },
+                data: {
+                    planId: plan.id,
+                    status: subscription.status === "active" ? "active" : "inactive",
                 },
             });
         }
