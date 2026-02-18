@@ -58,6 +58,10 @@ export async function requirePlanLimit(req: AuthRequest, res: Response, next: Ne
             });
         }
 
+        const remaining = billing.plan.apiLimit - usage.count;
+
+        (req as any).remainingUsage = remaining;
+
         next();
     } catch (err) {
         next(err);
