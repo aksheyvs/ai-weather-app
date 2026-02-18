@@ -15,9 +15,18 @@ export async function requirePlanLimit(req: AuthRequest, res: Response, next: Ne
             include: { plan: true },
         });
 
-        if (!billing || billing.status !== "active") {
+        if (!billing) {
             return res.status(403).json({
-                message: "No active subscription",
+                message: "Billing not configured"
+            });
+        }
+
+        if (billing.status !== "active") {
+            return res.status(403).json({
+                message:
+                    billing.status === "past_due"
+                        ? "Payment failed. Please update tour payment method."
+                        : "Subscription inactive",
             });
         }
 
