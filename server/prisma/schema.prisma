@@ -55,6 +55,9 @@ model Billing {
   startDate DateTime @default(now())
   endDate   DateTime?
 
+  stripeCustomerId String?
+  stripeSubscriptionId String?
+
   tenantId  String   @unique
   tenant    Tenant   @relation(fields: [tenantId], references: [id])
 
