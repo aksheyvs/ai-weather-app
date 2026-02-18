@@ -1,6 +1,7 @@
 import express from "express"
 import { stripe } from "../config/stripe.js"
 import { prisma } from "../db/postgresClient.js"
+import { date } from "joi";
 
 const router = express.Router();
 
@@ -53,6 +54,32 @@ router.post("/webhook", express.raw({ type: "application/json" }),
                 where: { stripeSubscriptionId: subscriptionId },
                 data: {
                     status: "past_due",
+                },
+            });
+        }
+
+        if (event.type === "customer.subscription.deleted") {
+            const subscription = event.data.object as any;
+
+            const billing = await prisma.billing.findFirst({
+                where: { stripeSubscriptionId: subscription.id },
+            });
+
+            if (!billing) return res.json({ received: true });
+
+            const freePlan = await prisma.plan.findFirst({
+                where: { name: "Free" },
+            });
+
+            if (!freePlan) return res.json({ received: true });
+
+            await prisma.billing.update({
+                where: { tenantId: billing.tenantId },
+                data: {
+                    planId: freePlan.id,
+                    status: "active",
+                    stripeSubscriptionId: null,
+                    stripeCustomerId: null,
                 },
             });
         }
