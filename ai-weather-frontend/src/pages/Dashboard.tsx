@@ -5,48 +5,112 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+interface WeatherData {
+    location: {
+        city: string;
+    };
+    temperature: number;
+    humidity: number;
+    rain: boolean;
+    icon: string;
+}
+
 export default function Dashboard() {
     const [city, setCity] = useState("");
-    const [weather, setWeather] = useState<any>(null);
+    const [weather, setWeather] = useState<WeatherData | null>(null);
+    const [insight, setInsight] = useState<string | null>(null);
+    const [remaining, setRemaining] = useState<number | null>(null);
+    const [loadingWeather, setLoadingWeather] = useState(false);
+    const [loadingAI, setLoadingAI] = useState(false);
 
     async function fetchWeather() {
-        if (!city) return;
+        if (!city.trim()) return;
 
-        const res = await api.get(`/weather?city=${city}`);
-        setWeather(res.data);
+        try {
+            setLoadingWeather(true);
+            setInsight(null);
+
+            const res = await api.get(`/weather?city=${city}`);
+
+            setWeather(res.data.weather);
+            setRemaining(res.data.remaining);
+        } catch (err: any) {
+            alert(err.response?.data?.message || "Failed to fetch weather");
+        } finally {
+            setLoadingWeather(false);
+        }
+    }
+
+    async function fetchAIInsight() {
+        if (!city.trim()) return;
+
+        try {
+            setLoadingAI(true);
+
+            const res = await api.get(`/ai/insights?city=${city}&category=general`);
+
+            setInsight(res.data.insight);
+            setRemaining(res.data.remaining);
+        } catch (err: any) {
+            alert(err.response?.data?.message || "Failed to fetch AI insight");
+        } finally {
+            setLoadingAI(false);
+        }
     }
 
     return (
-        <>
-            <div className="p-10 space-y-6">
-                <div className="flex gap-2">
-                    <Input placeholder="Enter city" value={city} onChange={(e) => setCity(e.target.value)} />
+        <div className="space-y-6 max-w-2xl">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Search Weather</CardTitle>
+                </CardHeader>
 
-                    <Button onClick={fetchWeather}>Search</Button>
-                </div>
+                <CardContent className="flex gap-2">
+                    <Input placeholder="Enter city..." value={city} onChange={(e) => setCity(e.target.value)} />
+                    <Button onClick={fetchWeather} disabled={loadingWeather}>
+                        {loadingWeather ? "Loading..." : "Search"}
+                    </Button>
+                </CardContent>
+            </Card>
 
-                {weather && (
-                    <Card className="w-100">
-                        <CardHeader>
-                            <CardTitle>{weather.location.city}</CardTitle>
-                        </CardHeader>
+            {weather && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Weather in {weather.location.city}</CardTitle>
+                    </CardHeader>
 
-                        <CardContent className="text-center space-y-3">
-                            {weather.icon && (
-                                <img
-                                    className="mx-auto"
-                                    src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
-                                    alt="weather"
-                                />
-                            )}
+                    <CardContent className="space-y-4">
+                        <div className="flex items-center gap-6">
+                            <img src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`} alt="weather icon" />
 
-                            <p className="text-3xl font-bold">Temperature: {weather.temperature}°C</p>
-                            <p>Humidity: {weather.humidity}%</p>
-                            <p>Condition: {weather.condition}</p>
-                        </CardContent>
-                    </Card>
-                )}
-            </div>
-        </>
+                            <div className="space-y-1">
+                                <p className="text-lg font-semibold">{weather.temperature}°C</p>
+                                <p>Humidity: {weather.humidity}%</p>
+                                <p>Rain: {weather.rain ? "Yes 🌧️" : "No ☀️"}</p>
+                            </div>
+                        </div>
+
+                        <Button variant="secondary" onClick={fetchAIInsight} disabled={loadingAI}>
+                            {loadingAI ? "Generating..." : "Get AI Insight"}
+                        </Button>
+                    </CardContent>
+                </Card>
+            )}
+
+            {insight && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>AI Insight</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p>{insight}</p>
+                    </CardContent>
+                </Card>
+            )}
+
+            {remaining !== null && (
+                <p className="text-sm text-muted-foreground">Remaining API calls today: {remaining}</p>
+            )}
+        </div>
     );
 }
