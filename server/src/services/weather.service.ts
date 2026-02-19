@@ -9,12 +9,16 @@ const httpsAgent = new https.Agent({
     family: 4,
 });
 
-export async function getWeatherByCity(tenantId: string, city: string) {
-    const cacheKey = `weather:${tenantId}:${city.toLowerCase()}`;
+export async function getWeatherByCity(
+    tenantId: string,
+    city: string
+) {
+    const normalizedCity = city.toLowerCase();
+    const cacheKey = `weather:${tenantId}:${normalizedCity}`;
 
     const cached = await redis.get(cacheKey);
-
     if (cached) return JSON.parse(cached);
+
     try {
         const response = await axios.get(
             "https://api.openweathermap.org/data/2.5/weather",
@@ -29,6 +33,15 @@ export async function getWeatherByCity(tenantId: string, city: string) {
             }
         );
 
+        const mainCondition =
+            response.data.weather[0].main.toLowerCase();
+
+        const rainTypes = ["rain", "drizzle", "thunderstorm"];
+
+        const isRain = rainTypes.some(type =>
+            mainCondition.includes(type)
+        );
+
         const weatherData = {
             tenantId,
             location: {
@@ -38,7 +51,7 @@ export async function getWeatherByCity(tenantId: string, city: string) {
             },
             temperature: response.data.main.temp,
             humidity: response.data.main.humidity,
-            rain: Boolean(response.data.rain),
+            rain: isRain,
             icon: response.data.weather[0].icon,
             condition: response.data.weather[0].main,
             source: "openweather",
@@ -47,16 +60,28 @@ export async function getWeatherByCity(tenantId: string, city: string) {
 
         await Weather.create(weatherData);
 
-        await redis.setEx(cacheKey, 600, JSON.stringify(weatherData));
+        await redis.setEx(
+            cacheKey,
+            600,
+            JSON.stringify(weatherData));
 
         return weatherData;
+
     } catch (error: any) {
-        console.error("OpenWeather connection failed:", error.message)
+        console.error(
+            "OpenWeather connection failed:",
+            error.message
+        )
 
         if (error.response) {
-            throw new Error(error.response.data?.message || "Weather API error");
+            throw new Error(
+                error.response.data?.message ||
+                "Weather API error"
+            );
         }
 
-        throw new Error("Weather service temporarily unavailable");
+        throw new Error(
+            "Weather service temporarily unavailable"
+        );
     }
 }
