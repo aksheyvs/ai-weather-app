@@ -22,7 +22,7 @@ app.use(express.json());
 
 app.use(cors());
 
-app.use("/", testRouter);
+// app.use("/", testRouter);
 
 app.use("/auth", authRoutes);
 
