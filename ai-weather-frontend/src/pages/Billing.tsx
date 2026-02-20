@@ -1,27 +1,23 @@
-import { useEffect, useState } from "react";
-import api from "../api/axios";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { getBillingStatus, createCheckout } from "@/api/billing";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function Billing() {
-    const [billing, setBilling] = useState<any>(null);
+    const { data: billing, isLoading } = useQuery({
+        queryKey: ["billing"],
+        queryFn: getBillingStatus,
+    });
 
-    useEffect(() => {
-        async function loadBilling() {
-            const res = await api.get("/billing/status");
-            setBilling(res.data);
-        }
-        loadBilling();
-    }, []);
+    const { mutate: upgrade, isPending } = useMutation({
+        mutationFn: createCheckout,
+        onSuccess: (data) => {
+            window.location.href = data.url;
+        },
+    });
 
-    async function upgrade() {
-        const res = await api.post("/billing/checkout", {
-            planId: billing?.proPlanId,
-        });
-
-        window.location.href = res.data.url;
-    }
+    if (isLoading) return <p>Loading billing...</p>;
 
     return (
         <Card className="w-100">
@@ -35,7 +31,11 @@ export default function Billing() {
                         <p>Current Plan: {billing.planName}</p>
                         <p>API Limit: {billing.apiLimit}</p>
 
-                        {billing.planName === "Free" && <Button onClick={upgrade}>Upgrade to Pro</Button>}
+                        {billing.planName === "Free" && (
+                            <Button onClick={() => upgrade(billing.proPlanId)} disabled={isPending}>
+                                {isPending ? "Redirecting..." : "Upgrade to Pro"}
+                            </Button>
+                        )}
                     </>
                 )}
             </CardContent>
