@@ -48,6 +48,12 @@ export async function createCheckoutSession(req: AuthRequest, res: Response) {
                 tenantId,
                 planId,
             },
+            subscription_data: {
+                metadata: {
+                    tenantId,
+                    planId,
+                },
+            },
         });
 
         return res.json({ url: session.url });
