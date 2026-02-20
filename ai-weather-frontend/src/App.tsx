@@ -11,6 +11,7 @@ import Alerts from "./pages/Alerts";
 import Invite from "./pages/Invite";
 import BillingSuccess from "./pages/BillingSuccess";
 import BillingCancel from "./pages/BillingCancel";
+import NotFount from "./pages/NotFount";
 
 export default function App() {
     return (
@@ -62,6 +63,8 @@ export default function App() {
                 />
                 <Route path="/billing/success" element={<BillingSuccess />} />
                 <Route path="/billing/cancel" element={<BillingCancel />} />
+
+                <Route path="*" element={<NotFount />} />
             </Routes>
         </BrowserRouter>
     );
