@@ -7,16 +7,15 @@ export async function inviteUser(req: AuthRequest, res: Response, next: NextFunc
     try {
         const { email, password } = req.body;
         const tenantId = req.user?.tenantId;
-        const role = req.user?.role;
 
-        if (!tenantId || !role) {
+        if (!tenantId) {
             return res.status(401).json({ message: "Unauthorized" });
         }
 
-        if (role !== "admin") {
-            return res.status(403).json({
-                message: "Only admin can invite users",
-            });
+        if (!email || !password) {
+            return res.status(400).json({
+                message: "Email and password are required"
+            })
         }
 
         const existingUser = await prisma.user.findUnique({
