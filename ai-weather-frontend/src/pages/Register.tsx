@@ -1,6 +1,6 @@
 import { useState } from "react";
 import api from "../api/axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -69,6 +69,13 @@ export default function Register() {
                     <Button className="w-full" onClick={handleRegister} disabled={loading}>
                         {loading ? "Creating..." : "Register"}
                     </Button>
+
+                    <p className="text-sm text-center text-muted-foreground">
+                        Already have an account?{" "}
+                        <Link to="/login" className="text-primary hover:underline">
+                            Login here
+                        </Link>
+                    </p>
                 </CardContent>
             </Card>
         </div>
