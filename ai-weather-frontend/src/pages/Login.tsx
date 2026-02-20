@@ -2,6 +2,7 @@ import { useState } from "react";
 import api from "../api/axios";
 import { useAuthStore } from "@/store/auth.store";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,13 @@ export default function Login() {
                     </div>
 
                     <Button onClick={handleLogin}>Login</Button>
+
+                    <p className="text-sm text-center text-muted-foreground">
+                        Don't have an account?{" "}
+                        <Link to="/register" className="text-primary hover:underline">
+                            Register here
+                        </Link>
+                    </p>
                 </CardContent>
             </Card>
         </div>
