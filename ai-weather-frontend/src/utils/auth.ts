@@ -26,3 +26,8 @@ export function getRole() {
     const user = getUserFromToken();
     return user?.role ?? null;
 }
+
+export function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+}
