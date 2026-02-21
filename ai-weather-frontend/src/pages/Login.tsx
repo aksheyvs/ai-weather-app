@@ -1,8 +1,7 @@
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import api from "../api/axios";
-import { useAuthStore } from "@/store/auth.store";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,16 +9,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function Login() {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const setToken = useAuthStore((s) => s.setToken);
-    const navigate = useNavigate();
+    const { mutate, isPending, error } = useMutation({
+        mutationFn: async () => {
+            const res = await api.post("/auth/login", {
+                email,
+                password,
+            });
+            return res.data;
+        },
+        onSuccess: (data) => {
+            localStorage.setItem("token", data.token);
 
-    async function handleLogin() {
-        const res = await api.post("/auth/login", { email, password });
-        setToken(res.data.token);
-        navigate("/dashboard");
+            navigate("/dashboard");
+        },
+    });
+
+    function handleLogin() {
+        if (!email.trim() || !password.trim()) return;
+        mutate();
     }
 
     return (
@@ -40,7 +52,15 @@ export default function Login() {
                         <Input type="password" placeholder="********" onChange={(e) => setPassword(e.target.value)} />
                     </div>
 
-                    <Button onClick={handleLogin}>Login</Button>
+                    <Button onClick={handleLogin} disabled={isPending}>
+                        {isPending ? "Logging in..." : "Login"}
+                    </Button>
+
+                    {error && (
+                        <p className="text-red-600 text-sm text-center">
+                            {(error as any)?.response?.data?.message || "Login failed. Please try again."}
+                        </p>
+                    )}
 
                     <p className="text-sm text-center text-muted-foreground">
                         Don't have an account?{" "}
