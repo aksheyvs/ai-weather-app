@@ -40,6 +40,8 @@ export default function Dashboard() {
         fetchAI();
     }
 
+    const remaining = aiDate?.remaining ?? weatherData?.remaining ?? null;
+
     return (
         <div className="space-y-6 max-w-2xl">
             <Card>
@@ -108,8 +110,8 @@ export default function Dashboard() {
                 </Card>
             )}
 
-            {weatherData?.remaining !== undefined && (
-                <p className="text-sm text-muted-foreground">Remaining API calls today: {weatherData.remaining}</p>
+            {remaining !== null && (
+                <p className="text-sm text-muted-foreground">Remaining API calls today: {remaining}</p>
             )}
         </div>
     );
