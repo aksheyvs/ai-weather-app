@@ -1,3 +1,4 @@
+import { required } from "joi";
 import mongoose from "mongoose";
 
 
@@ -11,25 +12,37 @@ const alertSchema = new Schema(
       index: true,
     },
 
-    email: {
+    city: {
       type: String,
-      required: true,
-    },
-
-    message: {
-      type: String,
-      required: true,
-    },
-
-    scheduledFor: {
-      type: Date,
-      required: true,
+      require: true,
+      lowercase: true,
       index: true,
     },
 
-    sent: {
+    conditionType: {
+      type: String,
+      enum: ["temperature", "humidity", "rain"],
+      required: true,
+    },
+
+    operator: {
+      type: String,
+      enum: [">", "<", ">=", "<=", "=="],
+      required: true,
+    },
+
+    value: {
+      type: Number,
+      required: true,
+    },
+
+    triggered: {
       type: Boolean,
       default: false,
+    },
+
+    lestTriggeredAt: {
+      type: Date,
     },
 
   },
