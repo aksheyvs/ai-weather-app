@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import ProtectedRoute from "./Router/ProtectedRoute";
+import AdminRoute from "./Router/AdminRoute";
 import Layout from "./layout/Layout";
 
 import Home from "./pages/Home";
@@ -55,9 +57,11 @@ export default function App() {
                     path="/invite"
                     element={
                         <ProtectedRoute>
-                            <Layout>
-                                <Invite />
-                            </Layout>
+                            <AdminRoute>
+                                <Layout>
+                                    <Invite />
+                                </Layout>
+                            </AdminRoute>
                         </ProtectedRoute>
                     }
                 />
