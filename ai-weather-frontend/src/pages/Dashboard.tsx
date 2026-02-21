@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getWeather, getAIInsight } from "@/api/weather";
+import type { AIInsightCategory } from "@/api/weather";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Input } from "@/components/ui/input";
 export default function Dashboard() {
     const [city, setCity] = useState("");
     const [searchCity, setSearchCity] = useState("");
+    const [category, setCategory] = useState<AIInsightCategory>("general");
 
     const {
         data: weatherData,
@@ -25,12 +27,17 @@ export default function Dashboard() {
         data: aiDate,
         isPending: loadingAI,
     } = useMutation({
-        mutationFn: () => getAIInsight(searchCity),
+        mutationFn: () => getAIInsight(searchCity, category),
     });
 
     function handleSearch() {
         if (!city.trim()) return;
         setSearchCity(city);
+    }
+
+    function handleAI() {
+        if (!searchCity) return;
+        fetchAI();
     }
 
     return (
@@ -70,7 +77,20 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        <Button variant="secondary" onClick={() => fetchAI()} disabled={loadingAI}>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">AI Insight Category</label>
+
+                            <select
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value as AIInsightCategory)}
+                                className="w-full border rounded-md p-2"
+                            >
+                                <option value="general">General</option>
+                                <option value="farming">Farming</option>
+                                <option value="outdoor">Outdoor</option>
+                            </select>
+                        </div>
+                        <Button variant="secondary" onClick={handleAI} disabled={loadingAI}>
                             {loadingAI ? "Generating..." : "Get AI Insight"}
                         </Button>
                     </CardContent>
@@ -80,7 +100,7 @@ export default function Dashboard() {
             {aiDate?.insight && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>AI Insight</CardTitle>
+                        <CardTitle>AI Insight ({category})</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <p>{aiDate.insight}</p>
