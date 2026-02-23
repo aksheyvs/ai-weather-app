@@ -12,7 +12,7 @@ if (!process.env.EMAIL_FROM) {
 
 const emailFrom = process.env.EMAIL_FROM;
 
-export async function sentWeatherEmail(to: string, subject: string, message: string) {
+export async function sendWeatherEmail(to: string, subject: string, message: string) {
     try {
         const response = await resent.emails.send({
             from: `Weather App <${emailFrom}>`,
