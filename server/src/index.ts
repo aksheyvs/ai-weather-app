@@ -9,7 +9,7 @@ import aiRoutes from "./route/ai.routes.js"
 import stripeWebhook from "./route/stripe.webhook.js"
 import billingRoutes from "./route/billing.routes.js"
 import tenantRouter from "./route/tenant.routes.js"
-import AlertRouter from "./route/alert.routes.js"
+import alertRouter from "./route/alert.routes.js"
 
 runMongo();
 runPostgres();
@@ -32,7 +32,7 @@ app.use("/billing", billingRoutes);
 
 app.use("/tenant", tenantRouter);
 
-app.use("/alerts", AlertRouter);
+app.use("/alerts", alertRouter);
 
 app.use(errorHandler);
 
