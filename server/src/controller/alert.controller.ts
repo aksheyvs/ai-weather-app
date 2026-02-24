@@ -2,6 +2,24 @@ import type { Response, NextFunction } from "express";
 import type { AuthRequest } from "../middleware/authMiddleware.js";
 import Alert from "../model/mongo/alerts.schema.js";
 
+export async function getAlerts(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+        const tenantId = req.user?.tenantId;
+
+        if (!tenantId) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        const alerts = await Alert.find({
+            tenantId,
+        }).sort({ createdAt: -1 });
+
+        return res.status(200).json(alerts);
+    } catch (err) {
+        next(err)
+    }
+}
+
 export async function createConditionAlert(req: AuthRequest, res: Response, next: NextFunction) {
     try {
         const tenantId = req.user?.tenantId;
