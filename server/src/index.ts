@@ -4,7 +4,6 @@ import { runMongo } from "./db/mondoClient.js"
 import { runPostgres } from "./db/postgresClient.js";
 import authRoutes from "./route/auth.routes.js"
 import cors from "cors"
-// import testRouter from "./route/test.routes.js"
 import weatherRoutes from "./route/weather.routes.js"
 import aiRoutes from "./route/ai.routes.js"
 import stripeWebhook from "./route/stripe.webhook.js"
@@ -21,8 +20,6 @@ app.use("/stripe", stripeWebhook);
 app.use(express.json());
 
 app.use(cors());
-
-// app.use("/", testRouter);
 
 app.use("/auth", authRoutes);
 
