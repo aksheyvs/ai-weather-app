@@ -1,5 +1,5 @@
 import app from "./index.js"
-
+import "./jobs/conditionAlert.job.js";
 
 const port: number = + (process.env.PORT ?? 3000)
 
