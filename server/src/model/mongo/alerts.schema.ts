@@ -41,7 +41,7 @@ const alertSchema = new Schema(
       default: false,
     },
 
-    lestTriggeredAt: {
+    lastTriggeredAt: {
       type: Date,
     },
 
