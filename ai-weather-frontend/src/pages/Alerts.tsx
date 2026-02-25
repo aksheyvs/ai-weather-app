@@ -24,7 +24,7 @@ export default function Alerts() {
     const [city, setCity] = useState("");
     const [conditionType, setConditionType] = useState("temperature");
     const [operator, setOperator] = useState(">");
-    const [value, setValue] = useState<number>(0);
+    const [value, setValue] = useState<number | "">("");
 
     const {
         data: alerts,
@@ -104,7 +104,11 @@ export default function Alerts() {
 
                     <div className="space-y-2">
                         <Label>Value</Label>
-                        <Input type="number" value={value} onChange={(e) => setValue(Number(e.target.value))} />
+                        <Input
+                            type="number"
+                            value={value}
+                            onChange={(e) => setValue(e.target.value === "" ? "" : Number(e.target.value))}
+                        />
                     </div>
 
                     <Button onClick={handleCreate} disabled={createMutation.isPending}>
