@@ -1,3 +1,4 @@
+import "./jobs/conditionAlert.job.js";
 import express from "express";
 import { errorHandler } from "./middleware/errorMiddleware.js"
 import { runMongo } from "./db/mondoClient.js"
