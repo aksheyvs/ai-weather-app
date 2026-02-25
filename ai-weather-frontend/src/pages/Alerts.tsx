@@ -25,6 +25,7 @@ export default function Alerts() {
     const [conditionType, setConditionType] = useState("temperature");
     const [operator, setOperator] = useState(">");
     const [value, setValue] = useState<number | "">("");
+    const [editingId, setEditingId] = useState<string | null>(null);
 
     const {
         data: alerts,
@@ -49,23 +50,64 @@ export default function Alerts() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["alerts"] });
+            resetForm();
         },
     });
 
-    function handleCreate() {
-        if (!city) {
-            alert("City is required");
+    const updateMutation = useMutation({
+        mutationFn: async () => {
+            await api.patch(`/alert/${editingId}`, {
+                city,
+                conditionType,
+                operator,
+                value,
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["alerts"] });
+            resetForm();
+        },
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: async (id: string) => {
+            await api.delete(`/alerts/${id}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["alerts"] });
+        },
+    });
+
+    function resetForm() {
+        (setCity(""), setValue(""), setEditingId(null));
+    }
+
+    function handleSubmit() {
+        if (!city || value === "") {
+            alert("City and value required");
             return;
         }
 
-        createMutation.mutate();
+        if (editingId) {
+            updateMutation.mutate();
+        } else {
+            createMutation.mutate();
+        }
+    }
+
+    function startEdit(alert: Alert) {
+        setEditingId(alert._id);
+        setCity(alert.city);
+        setConditionType(alert.conditionType);
+        setOperator(alert.operator);
+        setValue(alert.value);
     }
 
     return (
         <div className="space-y-6 max-w-2xl">
             <Card>
                 <CardHeader>
-                    <CardTitle>Create Condition Alert</CardTitle>
+                    <CardTitle>{editingId ? "Edit Alert" : "Create Condition Alert"}</CardTitle>
                 </CardHeader>
 
                 <CardContent className="space-y-4">
@@ -111,9 +153,15 @@ export default function Alerts() {
                         />
                     </div>
 
-                    <Button onClick={handleCreate} disabled={createMutation.isPending}>
-                        {createMutation.isPending ? "Creating..." : "Create Alert"}
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button onClick={handleSubmit}>{editingId ? "Update Alert" : "Create Alert"}</Button>
+
+                        {editingId && (
+                            <Button variant="secondary" onClick={resetForm}>
+                                Cancel
+                            </Button>
+                        )}
+                    </div>
                 </CardContent>
             </Card>
 
@@ -131,19 +179,31 @@ export default function Alerts() {
 
                     {alerts?.map((alert) => (
                         <div key={alert._id} className="border rounded-md p-3">
-                            <p className="font-medium">{alert.city}</p>
+                            <div>
+                                <p className="font-medium">{alert.city}</p>
 
-                            <p className="text-sm text-gray-600">
-                                {alert.conditionType} {alert.operator} {alert.value}
-                            </p>
+                                <p className="text-sm text-gray-600">
+                                    {alert.conditionType} {alert.operator} {alert.value}
+                                </p>
 
-                            <p className="text-xs text-gray-500 mt-1">
-                                Status: {alert.triggered ? "Triggered ✅" : "Waiting ⏳"}
-                            </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                    Status: {alert.triggered ? "Triggered ✅" : "Waiting ⏳"}
+                                </p>
+                            </div>
 
-                            <p className="text-xs text-gray-400">
-                                Created: {new Date(alert.createdAt).toLocaleString()}
-                            </p>
+                            <div className="flex gap-2">
+                                <Button size="sm" variant="secondary" onClick={() => startEdit(alert)}>
+                                    Edit
+                                </Button>
+
+                                <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() => deleteMutation.mutate(alert._id)}
+                                >
+                                    Delete
+                                </Button>
+                            </div>
                         </div>
                     ))}
                 </CardContent>
