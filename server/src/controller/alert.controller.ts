@@ -74,3 +74,25 @@ export async function deleteAlert(req: AuthRequest, res: Response, next: NextFun
         next(err);
     }
 }
+
+export async function updateAlert(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+        const tenantId = req.user?.tenantId;
+        const { id } = req.params;
+
+        if (!tenantId) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        const updated = await Alert.findOneAndUpdate(
+            { _id: id, tenantId },
+            req.body,
+            { new: true }
+        );
+
+        res.status(200).json(updated)
+
+    } catch (err) {
+        next(err);
+    }
+}
