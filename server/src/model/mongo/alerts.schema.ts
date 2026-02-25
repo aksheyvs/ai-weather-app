@@ -61,7 +61,7 @@ const alertSchema = new Schema<IAlert>(
 
     active: {
       type: Boolean,
-      default: false,
+      default: true,
     },
 
     lastTriggeredAt: {
