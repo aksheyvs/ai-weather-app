@@ -1,9 +1,22 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 
+export interface IAlert extends Document {
+  tenantId: string;
+  city: string;
+  conditionType: "temperature" | "humidity" | "rain";
+  operator: ">" | "<" | ">=" | "<=" | "==";
+  value: number;
+  checkIntervalHours: number;
+  nextCheckAt: Date;
+  active: boolean;
+  lastTriggeredAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 const { Schema, model } = mongoose;
 
-const alertSchema = new Schema(
+const alertSchema = new Schema<IAlert>(
   {
     tenantId: {
       type: String,
@@ -40,6 +53,12 @@ const alertSchema = new Schema(
       default: 4,
     },
 
+    nextCheckAt: {
+      type: Date,
+      required: true,
+      index: true,
+    },
+
     active: {
       type: Boolean,
       default: false,
@@ -48,10 +67,9 @@ const alertSchema = new Schema(
     lastTriggeredAt: {
       type: Date,
     },
-
   },
   { timestamps: true }
 );
 
-const Alert = model("Alert", alertSchema);
+const Alert = model<IAlert>("Alert", alertSchema);
 export default Alert;
