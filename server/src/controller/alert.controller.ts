@@ -86,7 +86,7 @@ export async function updateAlert(req: AuthRequest, res: Response, next: NextFun
 
         const updated = await Alert.findOneAndUpdate(
             { _id: id, tenantId },
-            req.body,
+            { city, conditionType, operator, value }
             { new: true }
         );
 
