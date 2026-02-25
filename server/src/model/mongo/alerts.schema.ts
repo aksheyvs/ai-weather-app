@@ -35,7 +35,12 @@ const alertSchema = new Schema(
       required: true,
     },
 
-    triggered: {
+    checkIntervalHours: {
+      type: Number,
+      default: 4,
+    },
+
+    active: {
       type: Boolean,
       default: false,
     },
