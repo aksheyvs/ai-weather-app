@@ -49,3 +49,28 @@ export async function createConditionAlert(req: AuthRequest, res: Response, next
         next(err);
     }
 }
+
+export async function deleteAlert(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+        const tenantId = req.user?.tenantId;
+        const { id } = req.params;
+
+        if (!tenantId) {
+            return res.status(401).json({
+                message: "Unauthorized"
+            });
+        }
+
+        await Alert.findOneAndDelete({
+            _id: id,
+            tenantId,
+        });
+
+        res.status(200).json({
+            message: "Alert deleted"
+        });
+
+    } catch (err) {
+        next(err);
+    }
+}
