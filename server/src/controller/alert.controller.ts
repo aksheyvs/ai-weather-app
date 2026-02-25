@@ -28,13 +28,15 @@ export async function createConditionAlert(req: AuthRequest, res: Response, next
             return res.status(401).json({ message: "Unauthorized" });
         }
 
-        const { city, conditionType, operator, value } = req.body;
+        const { city, conditionType, operator, value, checkIntervalHours, } = req.body;
 
-        if (!city || !conditionType || !operator || value === undefined) {
+        if (!city || value === undefined) {
             return res.status(400).json({
-                message: "city, conditionType, operator and value required"
-            })
+                message: "Missing required fields"
+            });
         }
+
+        const interval = checkIntervalHours || 4;
 
         const alert = await Alert.create({
             tenantId,
@@ -42,9 +44,39 @@ export async function createConditionAlert(req: AuthRequest, res: Response, next
             conditionType,
             operator,
             value,
+            checkIntervalHours: interval,
+            nextCheckAt: new Date(
+                Date.now() + interval * 60 * 60 * 1000
+            ),
         });
 
         res.status(201).json(alert);
+    } catch (err) {
+        next(err);
+    }
+}
+
+export async function updateAlert(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+        const tenantId = req.user?.tenantId;
+        const { id } = req.params;
+
+        if (!tenantId) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        if (!id || typeof id !== "string") {
+            return res.status(400).json({ message: "Invalid alert ID" })
+        }
+
+        const updated = await Alert.findOneAndUpdate(
+            { _id: id, tenantId },
+            req.body,
+            { new: true }
+        );
+
+        res.status(200).json(updated)
+
     } catch (err) {
         next(err);
     }
@@ -61,6 +93,10 @@ export async function deleteAlert(req: AuthRequest, res: Response, next: NextFun
             });
         }
 
+        if (!id || typeof id !== "string") {
+            return res.status(400).json({ message: "Invalid alert ID" })
+        }
+
         await Alert.findOneAndDelete({
             _id: id,
             tenantId,
@@ -69,28 +105,6 @@ export async function deleteAlert(req: AuthRequest, res: Response, next: NextFun
         res.status(200).json({
             message: "Alert deleted"
         });
-
-    } catch (err) {
-        next(err);
-    }
-}
-
-export async function updateAlert(req: AuthRequest, res: Response, next: NextFunction) {
-    try {
-        const tenantId = req.user?.tenantId;
-        const { id } = req.params;
-
-        if (!tenantId) {
-            return res.status(401).json({ message: "Unauthorized" });
-        }
-
-        const updated = await Alert.findOneAndUpdate(
-            { _id: id, tenantId },
-            req.body,
-            { new: true }
-        );
-
-        res.status(200).json(updated)
 
     } catch (err) {
         next(err);
