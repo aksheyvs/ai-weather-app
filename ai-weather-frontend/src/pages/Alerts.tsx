@@ -14,8 +14,8 @@ interface Alert {
     conditionType: string;
     operator: string;
     value: number;
-    triggered: boolean;
-    createdAt: string;
+    checkIntervalHours: number;
+    active: boolean;
 }
 
 export default function Alerts() {
@@ -25,6 +25,7 @@ export default function Alerts() {
     const [conditionType, setConditionType] = useState("temperature");
     const [operator, setOperator] = useState(">");
     const [value, setValue] = useState<number | "">("");
+    const [interval, setInterval] = useState<number | "">("");
     const [editingId, setEditingId] = useState<string | null>(null);
 
     const {
@@ -34,7 +35,7 @@ export default function Alerts() {
     } = useQuery<Alert[]>({
         queryKey: ["alerts"],
         queryFn: async () => {
-            const res = await api.get("alerts");
+            const res = await api.get("/alerts");
             return res.data;
         },
     });
@@ -46,6 +47,7 @@ export default function Alerts() {
                 conditionType,
                 operator,
                 value,
+                checkIntervalHours: interval,
             });
         },
         onSuccess: () => {
@@ -56,11 +58,12 @@ export default function Alerts() {
 
     const updateMutation = useMutation({
         mutationFn: async () => {
-            await api.patch(`/alert/${editingId}`, {
+            await api.patch(`/alerts/${editingId}`, {
                 city,
                 conditionType,
                 operator,
                 value,
+                checkIntervalHours: interval,
             });
         },
         onSuccess: () => {
@@ -79,7 +82,12 @@ export default function Alerts() {
     });
 
     function resetForm() {
-        (setCity(""), setValue(""), setEditingId(null));
+        (setCity(""),
+            setConditionType("temperature"),
+            setOperator(">"),
+            setValue(""),
+            setInterval(""),
+            setEditingId(null));
     }
 
     function handleSubmit() {
@@ -101,6 +109,7 @@ export default function Alerts() {
         setConditionType(alert.conditionType);
         setOperator(alert.operator);
         setValue(alert.value);
+        setInterval(alert.checkIntervalHours);
     }
 
     return (
@@ -153,6 +162,15 @@ export default function Alerts() {
                         />
                     </div>
 
+                    <div className="space-y-2">
+                        <Label>Check Every (Hours)</Label>
+                        <Input
+                            type="number"
+                            value={interval}
+                            onChange={(e) => setInterval(e.target.value === "" ? "" : Number(e.target.value))}
+                        />
+                    </div>
+
                     <div className="flex gap-2">
                         <Button onClick={handleSubmit}>{editingId ? "Update Alert" : "Create Alert"}</Button>
 
@@ -175,10 +193,10 @@ export default function Alerts() {
 
                     {isError && <p className="text-sm text-red-500">Failed to load alerts.</p>}
 
-                    {alerts && alerts.length === 0 && <p className="text-sm text-gray-500">No alerts created yet</p>}
+                    {alerts?.length === 0 && <p className="text-sm text-gray-500">No alerts created yet</p>}
 
                     {alerts?.map((alert) => (
-                        <div key={alert._id} className="border rounded-md p-3">
+                        <div key={alert._id} className="border rounded-md p-3 flex justify-between items-center">
                             <div>
                                 <p className="font-medium">{alert.city}</p>
 
@@ -186,9 +204,9 @@ export default function Alerts() {
                                     {alert.conditionType} {alert.operator} {alert.value}
                                 </p>
 
-                                <p className="text-xs text-gray-500 mt-1">
-                                    Status: {alert.triggered ? "Triggered ✅" : "Waiting ⏳"}
-                                </p>
+                                <p className="text-xs text-gray-500 mt-1">Every: {alert.checkIntervalHours} hours</p>
+
+                                <p className="text-xs mt-1">Status: {alert.active ? "Active ⏳" : "Triggered ✅"}</p>
                             </div>
 
                             <div className="flex gap-2">
