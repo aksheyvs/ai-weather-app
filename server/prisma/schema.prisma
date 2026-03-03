@@ -33,6 +33,8 @@ model User {
   isActive   Boolean  @default(true)
   deletedAt  DateTime?
 
+  pushToken String?
+
   createdAt DateTime @default(now())
 
   tenantId  String
