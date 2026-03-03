@@ -7,7 +7,7 @@ export function evaluateCondition(
         case ">":
             return actual > expected;
         case "<":
-            return actual > expected;
+            return actual < expected;
         case ">=":
             return actual >= expected;
         case "<=":
