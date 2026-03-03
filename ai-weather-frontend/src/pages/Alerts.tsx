@@ -16,6 +16,7 @@ interface Alert {
     value: number;
     checkIntervalHours: number;
     active: boolean;
+    pushEnabled: boolean;
 }
 
 export default function Alerts() {
@@ -75,6 +76,17 @@ export default function Alerts() {
     const deleteMutation = useMutation({
         mutationFn: async (id: string) => {
             await api.delete(`/alerts/${id}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["alerts"] });
+        },
+    });
+
+    const togglePushMutation = useMutation({
+        mutationFn: async ({ id, pushEnabled }: { id: string; pushEnabled: boolean }) => {
+            await api.patch(`/alerts/${id}`, {
+                pushEnabled,
+            });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["alerts"] });
@@ -207,6 +219,8 @@ export default function Alerts() {
                                 <p className="text-xs text-gray-500 mt-1">Every: {alert.checkIntervalHours} hours</p>
 
                                 <p className="text-xs mt-1">Status: {alert.active ? "Active ⏳" : "Triggered ✅"}</p>
+
+                                <p className="text-xs mt-1">Push: {alert.pushEnabled ? "Enabled 🔔" : "Disabled"}</p>
                             </div>
 
                             <div className="flex gap-2">
@@ -220,6 +234,19 @@ export default function Alerts() {
                                     onClick={() => deleteMutation.mutate(alert._id)}
                                 >
                                     Delete
+                                </Button>
+
+                                <Button
+                                    size="sm"
+                                    variant={alert.pushEnabled ? "default" : "secondary"}
+                                    onClick={() =>
+                                        togglePushMutation.mutate({
+                                            id: alert._id,
+                                            pushEnabled: !alert.pushEnabled,
+                                        })
+                                    }
+                                >
+                                    {alert.pushEnabled ? "Push ON 🔔" : "Push OFF"}
                                 </Button>
                             </div>
                         </div>
