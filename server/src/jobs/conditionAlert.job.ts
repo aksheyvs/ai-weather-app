@@ -4,6 +4,7 @@ import { prisma } from "../db/postgresClient.js"
 import { getWeatherByCity } from "../services/weather.service.js";
 import { sendWeatherEmail } from "../services/email.service.js";
 import { evaluateCondition } from "../utils/evaluateCondition.js";
+import { sendPushNotification } from "../services/push.service.js";
 
 cron.schedule("*/5 * * * *", async () => {
     console.log("Checking condition-based alerts...");
@@ -63,6 +64,14 @@ cron.schedule("*/5 * * * *", async () => {
                     Current value: ${actualValue}
                     `
                     );
+
+                    if (alert.pushEnabled && user.pushToken) {
+                        await sendPushNotification(
+                            user.pushToken,
+                            "Weather Alert",
+                            `Condition met in ${alert.city}`
+                        );
+                    }
                 }
 
                 alert.active = false;
