@@ -8,6 +8,7 @@ export interface IAlert extends Document {
   value: number;
   checkIntervalHours: number;
   nextCheckAt: Date;
+  pushEnabled: boolean;
   active: boolean;
   lastTriggeredAt?: Date;
   createdAt: Date;
@@ -57,6 +58,11 @@ const alertSchema = new Schema<IAlert>(
       type: Date,
       required: true,
       index: true,
+    },
+
+    pushEnabled: {
+      type: Boolean,
+      default: false,
     },
 
     active: {
