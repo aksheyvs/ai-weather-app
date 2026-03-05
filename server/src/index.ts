@@ -11,6 +11,7 @@ import stripeWebhook from "./route/stripe.webhook.js"
 import billingRoutes from "./route/billing.routes.js"
 import tenantRouter from "./route/tenant.routes.js"
 import alertRouter from "./route/alert.routes.js"
+import userRouter from "./route/user.routes.js"
 
 runMongo();
 runPostgres();
@@ -34,6 +35,8 @@ app.use("/billing", billingRoutes);
 app.use("/tenant", tenantRouter);
 
 app.use("/alerts", alertRouter);
+
+app.use("/user", userRouter);
 
 app.use(errorHandler);
 
