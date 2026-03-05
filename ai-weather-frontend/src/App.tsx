@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import usePushNotifications from "./hooks/usePushNotifications";
+
 import ProtectedRoute from "./Router/ProtectedRoute";
 import AdminRoute from "./Router/AdminRoute";
 import Layout from "./layout/Layout";
@@ -16,6 +18,7 @@ import BillingCancel from "./pages/BillingCancel";
 import NotFount from "./pages/NotFount";
 
 export default function App() {
+    usePushNotifications();
     return (
         <BrowserRouter>
             <Routes>
