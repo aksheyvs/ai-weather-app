@@ -6,7 +6,7 @@ import { sendWeatherEmail } from "../services/email.service.js";
 import { evaluateCondition } from "../utils/evaluateCondition.js";
 import { sendPushNotification } from "../services/push.service.js";
 
-cron.schedule("*/5 * * * *", async () => {
+cron.schedule("*/1 * * * *", async () => {
     console.log("Checking condition-based alerts...");
 
     try {
