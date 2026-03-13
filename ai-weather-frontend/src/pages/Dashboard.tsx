@@ -50,7 +50,16 @@ export default function Dashboard() {
                 </CardHeader>
 
                 <CardContent className="flex gap-2">
-                    <Input placeholder="Enter city..." value={city} onChange={(e) => setCity(e.target.value)} />
+                    <Input
+                        placeholder="Enter city..."
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                handleSearch();
+                            }
+                        }}
+                    />
                     <Button onClick={handleSearch} disabled={loadingWeather}>
                         {loadingWeather ? "Loading..." : "Search"}
                     </Button>
