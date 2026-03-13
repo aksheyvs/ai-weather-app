@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getWeather, getAIInsight } from "@/api/weather";
 import type { AIInsightCategory } from "@/api/weather";
+import ReactMarkdown from "react-markdown";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -131,8 +132,8 @@ export default function Dashboard() {
                     <CardHeader>
                         <CardTitle>AI Insight ({category})</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <p>{aiDate.insight}</p>
+                    <CardContent className="prose">
+                        <ReactMarkdown>{aiDate.insight}</ReactMarkdown>
                     </CardContent>
                 </Card>
             )}
