@@ -65,7 +65,8 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
 };
 
 export async function loginUser(req: Request, res: Response, next: NextFunction) {
-    const { email, password } = req.body;
+    const { password } = req.body;
+    const email = req.body.email.toLowerCase().trim();
 
     try {
         const user = await prisma.user.findUnique({
