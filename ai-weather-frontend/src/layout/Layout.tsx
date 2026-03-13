@@ -2,9 +2,10 @@ import Navbar from "../components/Navbar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
-        <>
+        <div className="min-h-screen bg-slate-950 text-white">
             <Navbar />
-            <div className="p-6">{children}</div>
-        </>
+
+            <main className="max-w-6xl mx-auto p-6">{children}</main>
+        </div>
     );
 }

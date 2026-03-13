@@ -17,28 +17,57 @@ export default function Billing() {
         },
     });
 
-    if (isLoading) return <p>Loading billing...</p>;
+    if (isLoading) {
+        return (
+            <div className="max-w-3xl mx-auto">
+                <p className="text-slate-400">Loading billing...</p>
+            </div>
+        );
+    }
 
     return (
-        <Card className="w-100">
-            <CardHeader>
-                <CardTitle>Subscription</CardTitle>
-            </CardHeader>
+        <div className="max-w-3xl mx-auto space-y-6">
+            <Card className="bg-slate-900 border border-slate-800">
+                <CardHeader>
+                    <CardTitle className="text-white">Subscription</CardTitle>
+                </CardHeader>
 
-            <CardContent className="space-y-3">
-                {billing && (
-                    <>
-                        <p>Current Plan: {billing.planName}</p>
-                        <p>API Limit: {billing.apiLimit}</p>
+                <CardContent className="space-y-5 text-slate-300">
+                    {billing && (
+                        <>
+                            <div className="flex justify-between items-center">
+                                <span className="text-slate-400">Current Plan</span>
+                                <span className="text-white font-semibold">{billing.planName}</span>
+                            </div>
 
-                        {billing.planName === "Free" && (
-                            <Button onClick={() => upgrade(billing.proPlanId)} disabled={isPending}>
-                                {isPending ? "Redirecting..." : "Upgrade to Pro"}
-                            </Button>
-                        )}
-                    </>
-                )}
-            </CardContent>
-        </Card>
+                            <div className="flex justify-between items-center">
+                                <span className="text-slate-400">Daily API Limit</span>
+                                <span className="text-white font-semibold">{billing.apiLimit}</span>
+                            </div>
+
+                            {billing.planName === "Free" && (
+                                <div className="pt-4 border-t border-slate-800">
+                                    <p className="text-sm text-slate-400 mb-3">
+                                        Upgrade to Pro for unlimited AI insights and higher API limits.
+                                    </p>
+
+                                    <Button
+                                        className="bg-blue-600 hover:bg-blue-500"
+                                        onClick={() => upgrade(billing.proPlanId)}
+                                        disabled={isPending}
+                                    >
+                                        {isPending ? "Redirecting..." : "Upgrade to Pro"}
+                                    </Button>
+                                </div>
+                            )}
+
+                            {billing.planName !== "Free" && (
+                                <p className="text-green-400 text-sm">You are currently on a Pro plan.</p>
+                            )}
+                        </>
+                    )}
+                </CardContent>
+            </Card>
+        </div>
     );
 }

@@ -84,9 +84,7 @@ export default function Alerts() {
 
     const togglePushMutation = useMutation({
         mutationFn: async ({ id, pushEnabled }: { id: string; pushEnabled: boolean }) => {
-            await api.patch(`/alerts/${id}`, {
-                pushEnabled,
-            });
+            await api.patch(`/alerts/${id}`, { pushEnabled });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["alerts"] });
@@ -94,12 +92,12 @@ export default function Alerts() {
     });
 
     function resetForm() {
-        (setCity(""),
-            setConditionType("temperature"),
-            setOperator(">"),
-            setValue(""),
-            setInterval(""),
-            setEditingId(null));
+        setCity("");
+        setConditionType("temperature");
+        setOperator(">");
+        setValue("");
+        setInterval("");
+        setEditingId(null);
     }
 
     function handleSubmit() {
@@ -108,11 +106,8 @@ export default function Alerts() {
             return;
         }
 
-        if (editingId) {
-            updateMutation.mutate();
-        } else {
-            createMutation.mutate();
-        }
+        if (editingId) updateMutation.mutate();
+        else createMutation.mutate();
     }
 
     function startEdit(alert: Alert) {
@@ -125,22 +120,27 @@ export default function Alerts() {
     }
 
     return (
-        <div className="space-y-6 max-w-2xl">
-            <Card>
+        <div className="space-y-6 max-w-3xl mx-auto">
+            <Card className="bg-slate-900 border border-slate-800">
                 <CardHeader>
-                    <CardTitle>{editingId ? "Edit Alert" : "Create Condition Alert"}</CardTitle>
+                    <CardTitle className="text-white">{editingId ? "Edit Alert" : "Create Condition Alert"}</CardTitle>
                 </CardHeader>
 
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
-                        <Label>City</Label>
-                        <Input placeholder="Enter city..." value={city} onChange={(e) => setCity(e.target.value)} />
+                        <Label className="text-slate-300">City</Label>
+                        <Input
+                            placeholder="Enter city..."
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
+                            className="bg-slate-950 border-slate-700 text-white placeholder:text-slate-500"
+                        />
                     </div>
 
                     <div className="space-y-2">
-                        <Label>Condition Type</Label>
+                        <Label className="text-slate-300">Condition Type</Label>
                         <select
-                            className="w-full border rounded-md p-2"
+                            className="w-full bg-slate-950 border border-slate-700 text-white rounded-md p-2"
                             value={conditionType}
                             onChange={(e) => setConditionType(e.target.value)}
                         >
@@ -151,9 +151,9 @@ export default function Alerts() {
                     </div>
 
                     <div className="space-y-2">
-                        <Label>Operator</Label>
+                        <Label className="text-slate-300">Operator</Label>
                         <select
-                            className="w-full border rounded-md p-2"
+                            className="w-full bg-slate-950 border border-slate-700 text-white rounded-md p-2"
                             value={operator}
                             onChange={(e) => setOperator(e.target.value)}
                         >
@@ -166,20 +166,22 @@ export default function Alerts() {
                     </div>
 
                     <div className="space-y-2">
-                        <Label>Value</Label>
+                        <Label className="text-slate-300">Value</Label>
                         <Input
                             type="number"
                             value={value}
                             onChange={(e) => setValue(e.target.value === "" ? "" : Number(e.target.value))}
+                            className="bg-slate-950 border-slate-700 text-white"
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label>Check Every (Hours)</Label>
+                        <Label className="text-slate-300">Check Every (Hours)</Label>
                         <Input
                             type="number"
                             value={interval}
                             onChange={(e) => setInterval(e.target.value === "" ? "" : Number(e.target.value))}
+                            className="bg-slate-950 border-slate-700 text-white"
                         />
                     </div>
 
@@ -195,32 +197,35 @@ export default function Alerts() {
                 </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-slate-900 border border-slate-800">
                 <CardHeader>
-                    <CardTitle>Your Alerts</CardTitle>
+                    <CardTitle className="text-white">Your Alerts</CardTitle>
                 </CardHeader>
 
                 <CardContent className="space-y-4">
-                    {isLoading && <p className="text-sm text-gray-500">Loading alerts...</p>}
+                    {isLoading && <p className="text-sm text-slate-400">Loading alerts...</p>}
 
                     {isError && <p className="text-sm text-red-500">Failed to load alerts.</p>}
 
-                    {alerts?.length === 0 && <p className="text-sm text-gray-500">No alerts created yet</p>}
+                    {alerts?.length === 0 && <p className="text-sm text-slate-400">No alerts created yet</p>}
 
                     {alerts?.map((alert) => (
-                        <div key={alert._id} className="border rounded-md p-3 flex justify-between items-center">
-                            <div>
-                                <p className="font-medium">{alert.city}</p>
+                        <div
+                            key={alert._id}
+                            className="border border-slate-800 rounded-md p-4 flex justify-between items-center bg-slate-950"
+                        >
+                            <div className="space-y-1 text-slate-300">
+                                <p className="font-semibold text-white">{alert.city}</p>
 
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm">
                                     {alert.conditionType} {alert.operator} {alert.value}
                                 </p>
 
-                                <p className="text-xs text-gray-500 mt-1">Every: {alert.checkIntervalHours} hours</p>
+                                <p className="text-xs text-slate-400">Every: {alert.checkIntervalHours} hours</p>
 
-                                <p className="text-xs mt-1">Status: {alert.active ? "Active ⏳" : "Triggered ✅"}</p>
+                                <p className="text-xs">Status: {alert.active ? "Active ⏳" : "Triggered ✅"}</p>
 
-                                <p className="text-xs mt-1">Push: {alert.pushEnabled ? "Enabled 🔔" : "Disabled"}</p>
+                                <p className="text-xs">Push: {alert.pushEnabled ? "Enabled 🔔" : "Disabled"}</p>
                             </div>
 
                             <div className="flex gap-2">
