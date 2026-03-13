@@ -7,6 +7,10 @@ const VAPID_KEY = "BFC5-NCV4BYXEdgw557UDYsTS3b0w0SssR4btofAoF2UW8mV6RXx0AmaOc_54
 
 export default function usePushNotifications() {
     useEffect(() => {
+        const tokenFromStorage = localStorage.getItem("token");
+
+        if (!tokenFromStorage) return;
+
         async function setupPush() {
             try {
                 const permission = await Notification.requestPermission();
