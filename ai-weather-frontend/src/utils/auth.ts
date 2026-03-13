@@ -8,7 +8,24 @@ interface TokenPayload {
 }
 
 export function getToken() {
-    return localStorage.getItem("token");
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+
+    try {
+        const decoded = jwtDecode<TokenPayload>(token);
+
+        const currentTime = Date.now() / 1000;
+
+        if (decoded.exp < currentTime) {
+            localStorage.removeItem("token");
+            return null;
+        }
+
+        return token;
+    } catch {
+        localStorage.removeItem("token");
+        return null;
+    }
 }
 
 export function getUserFromToken(): TokenPayload | null {
@@ -29,5 +46,8 @@ export function getRole() {
 
 export function logout() {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+
+    if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+    }
 }
