@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getWeather, getAIInsight } from "@/api/weather";
 import type { AIInsightCategory } from "@/api/weather";
 
@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function Dashboard() {
+    const queryClient = useQueryClient();
+
     const [city, setCity] = useState("");
     const [searchCity, setSearchCity] = useState("");
     const [category, setCategory] = useState<AIInsightCategory>("general");
@@ -20,7 +22,6 @@ export default function Dashboard() {
         queryKey: ["weather", searchCity],
         queryFn: () => getWeather(searchCity),
         enabled: !!searchCity,
-
         staleTime: 1000 * 60 * 10,
         gcTime: 1000 * 60 * 30,
     });
@@ -35,13 +36,27 @@ export default function Dashboard() {
 
     function handleSearch() {
         if (!city.trim()) return;
-        setSearchCity(city);
+
+        const normalizedCity = city.trim().toLowerCase();
+
+        setSearchCity(normalizedCity);
+
+        queryClient.setQueryData(["lastCity"], normalizedCity);
     }
 
     function handleAI() {
         if (!searchCity) return;
         fetchAI();
     }
+
+    useEffect(() => {
+        const lastCity = queryClient.getQueryData<string>(["lastCity"]);
+
+        if (lastCity) {
+            setSearchCity(lastCity);
+            setCity(lastCity);
+        }
+    }, []);
 
     const remaining = aiDate?.remaining ?? weatherData?.remaining ?? null;
 
