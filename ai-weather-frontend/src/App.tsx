@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import usePushNotifications from "./hooks/usePushNotifications";
+import useTokenExpiry from "./hooks/useTokenExpiry";
 
 import ProtectedRoute from "./Router/ProtectedRoute";
 import AdminRoute from "./Router/AdminRoute";
@@ -19,6 +20,7 @@ import NotFount from "./pages/NotFount";
 
 export default function App() {
     usePushNotifications();
+    useTokenExpiry();
     return (
         <BrowserRouter>
             <Routes>
