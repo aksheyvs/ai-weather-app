@@ -29,7 +29,7 @@ export default function Dashboard() {
 
     const {
         mutate: fetchAI,
-        data: aiDate,
+        data: aiData,
         isPending: loadingAI,
     } = useMutation({
         mutationFn: () => getAIInsight(searchCity, category),
@@ -58,7 +58,7 @@ export default function Dashboard() {
         }
     }, []);
 
-    const remaining = aiDate?.remaining ?? weatherData?.remaining ?? null;
+    const remaining = aiData?.remaining ?? weatherData?.remaining ?? null;
 
     return (
         <div className="space-y-6 max-w-4xl mx-auto">
@@ -128,14 +128,14 @@ export default function Dashboard() {
                 </Card>
             )}
 
-            {aiDate?.insight && (
+            {aiData?.insight && (
                 <Card className="bg-slate-900 border border-slate-800">
                     <CardHeader>
                         <CardTitle className="text-white">AI Insight ({category})</CardTitle>
                     </CardHeader>
 
                     <CardContent className="prose prose-invert max-w-none text-slate-200 leading-relaxed">
-                        <ReactMarkdown>{aiDate.insight}</ReactMarkdown>
+                        <ReactMarkdown>{aiData.insight}</ReactMarkdown>
                     </CardContent>
                 </Card>
             )}
