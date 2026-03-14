@@ -1,4 +1,4 @@
-import { prisma } from "../src/db/postgresClient.ts"
+import { prisma } from "../src/db/postgresClient.js"
 
 async function main() {
     await prisma.plan.createMany({

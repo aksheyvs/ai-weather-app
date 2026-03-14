@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+    ai-weather-app-server:
+        build: .
+        env_file:
+            - .env.docker
+        ports:
+            - "${PORT:-3000}:3000"
+        restart: unless-stopped
+        networks:
+            - shared-network
+networks:
+    shared-network:
+        external: true
+        name: my-shared-net

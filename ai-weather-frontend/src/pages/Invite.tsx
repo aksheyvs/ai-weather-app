@@ -13,7 +13,7 @@ export default function Invite() {
 
     const { mutate, isPending, isSuccess, error } = useMutation({
         mutationFn: async () => {
-            const res = await api.post("/invite", {
+            const res = await api.post("/tenant/invite", {
                 email,
                 password,
             });
