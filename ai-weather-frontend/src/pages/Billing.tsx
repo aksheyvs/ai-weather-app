@@ -68,6 +68,44 @@ export default function Billing() {
                     )}
                 </CardContent>
             </Card>
+
+            <Card className="bg-slate-900 border border-slate-800">
+                <CardHeader>
+                    <CardTitle className="text-white">Stripe Test Mode (Demo Card)</CardTitle>
+                </CardHeader>
+
+                <CardContent className="space-y-2 text-sm text-slate-300">
+                    <p className="text-slate-400">
+                        This app uses <span className="text-white">Stripe Test Mode</span>. Use the following card to
+                        test payments.
+                    </p>
+
+                    <div className="bg-slate-950 border border-slate-800 rounded-md p-4 space-y-1">
+                        <p>
+                            <span className="text-slate-400">Card Number:</span>{" "}
+                            <span className="text-white font-mono">4242 4242 4242 4242</span>
+                        </p>
+
+                        <p>
+                            <span className="text-slate-400">Expiry:</span>{" "}
+                            <span className="text-white">Any future date</span>
+                        </p>
+
+                        <p>
+                            <span className="text-slate-400">CVC:</span> <span className="text-white">123</span>
+                        </p>
+
+                        <p>
+                            <span className="text-slate-400">ZIP:</span> <span className="text-white">Any number</span>
+                        </p>
+
+                        <p>
+                            <span className="text-slate-400">Name / Email:</span>{" "}
+                            <span className="text-white">Any value</span>
+                        </p>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     );
 }
