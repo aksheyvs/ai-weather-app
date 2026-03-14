@@ -7,7 +7,7 @@ import { getMessaging } from "firebase/messaging";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyAaYwttldbrKcXIgQreZK2nKOClfQGhUgs",
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
     authDomain: "ai-weather-app-5c958.firebaseapp.com",
     projectId: "ai-weather-app-5c958",
     storageBucket: "ai-weather-app-5c958.firebasestorage.app",
