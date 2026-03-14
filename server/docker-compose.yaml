@@ -13,4 +13,4 @@ services:
 networks:
     shared-network:
         external: true
-        name: my-shared-net
+        name: app-network
