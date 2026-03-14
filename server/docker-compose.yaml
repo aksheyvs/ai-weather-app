@@ -13,4 +13,4 @@ services:
 networks:
     shared-network:
         external: true
-        name: app-network
+        name: db_app-network
