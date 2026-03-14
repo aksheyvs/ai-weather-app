@@ -33,6 +33,8 @@ export async function createCheckoutSession(req: AuthRequest, res: Response) {
             });
         }
 
+        const frontendUrl = process.env.FRONTEND_URL
+
         const session = await stripe.checkout.sessions.create({
             mode: "subscription",
             payment_method_types: ["card"],
@@ -42,8 +44,9 @@ export async function createCheckoutSession(req: AuthRequest, res: Response) {
                     quantity: 1,
                 },
             ],
-            success_url: "http://localhost:5173/billing/success",
-            cancel_url: "http://localhost:5173/billing/cancel",
+
+            success_url: `${frontendUrl}/billing/success`,
+            cancel_url: `${frontendUrl}/billing/cancel`,
             metadata: {
                 tenantId,
                 planId,
